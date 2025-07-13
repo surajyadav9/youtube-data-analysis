@@ -11,18 +11,18 @@ os_input_write_data_operation = os.environ['write_data_operation']
 
 
 def lambda_handler(event, context):
-    # Get the object from the event and show its content type
+    # Fetch the bucket-name(including sub-folders) and key(i.e. datafile name)
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
     try:
 
-        # Creating DF from content
+        # Read the json data and create dataframe
         df_raw = wr.s3.read_json('s3://{}/{}'.format(bucket, key))
 
-        # Extract required columns:
+        # Extract the 'items' column(contains relevant info. in nested JSON object) only and normalize it
         df_step_1 = pd.json_normalize(df_raw['items'])
 
-        # Write to S3
+        # Write to S3 with 'append' mode
         wr_response = wr.s3.to_parquet(
             df=df_step_1,
             path=os_input_s3_cleansed_layer,
@@ -35,5 +35,5 @@ def lambda_handler(event, context):
         return wr_response
     except Exception as e:
         print(e)
-        print('Error getting object {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.'.format(key, bucket))
+        print('Error getting key {} from bucket {}. Make sure they exist and your bucket is in the same region as this function.'.format(key, bucket))
         raise e
