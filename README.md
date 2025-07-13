@@ -168,7 +168,7 @@ To interpret:
 SELECT * FROM "AwsDataCatalog"."db_youtube_cleaned"."cleaned_statistics_ref_data" limit 10;
 ```
   
-> ✅ **Note** - 1. Created another role `youtubeanalysis-lambda-s3-role` with full access to S3 `AmazonS3FullAccess` and Glue `AWSGlueServiceRole` 2. Used Lambda Layers `AWSSDKPandas-Python39` version `28` for the dependecy packages. 2. Modified the `timeout:3min`, `memory:256MB` and `storage:512MB` for seamless run.
+> ✅ **Note** - 1. Created another role `youtubeanalysis-lambda-s3-role` with full access to S3 `AmazonS3FullAccess` and Glue `AWSGlueServiceRole` 2. Used Lambda Layers `AWSSDKPandas-Python39` version `28` for the dependecy packages. 3. Modified the `timeout:3min`, `memory:256MB` and `storage:512MB` for seamless run.
 
 ---
 
