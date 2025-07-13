@@ -191,7 +191,7 @@ SELECT * FROM "AwsDataCatalog"."db_youtube_cleaned"."cleaned_statistics_ref_data
 ### 6. 🔄 Automate JSON Normalization
 
 - Added an **S3 trigger** on the raw JSON folder to invoke the Lambda function.
-- Lambda automatically creates a Parquet version and updates the Glue catalog.
+- Lambda automatically creates a Parquet version of each `.json` file in a different bucket under `cleaned_statistics_ref_data` folder and updates(`append`) the Glue catalog.
 
 > ✅ **Note** - Triggers will be `All object create event` i.e. `PUT`, `POST`, `COPY` of only `.json` type in the JSON data source folder.
 
@@ -199,12 +199,13 @@ SELECT * FROM "AwsDataCatalog"."db_youtube_cleaned"."cleaned_statistics_ref_data
 
 ### 7. 🧪 ETL for CSV Data with PySpark
 
-- Initially attempted Glue Visual ETL – faced encoding & special character issues.
-- Switched to **custom PySpark job**:
+- Initially attempted Glue Visual ETL – faced encoding & special character issues. [Visual_to_Glue_Spark_Script_Failed.py](Visual_to_Glue_Spark_Script_Failed.py)
+- Switched to **custom PySpark job**: [Glue_PySpark_ETL_CSV_to_Parquet.py](Glue_PySpark_ETL_CSV_to_Parquet.py)
   - Read CSV from raw S3
   - Added "region" column manually
-  - Wrote cleaned Parquet to a new S3 location partitioned by region
-- Crawled the cleaned CSV folder to update Glue Catalog.
+  - Applied transformations i.e. type conversion of `string` columns to `long` and `boolean` wherever necessary
+  - Wrote cleaned Parquet to a new S3 location under `raw_data_transformed` folder partitioned by `region`
+- Created a new Glue Crawler to crawl the cleaned raw folder `raw_data_transformed` to create a new catalog table with partition column `region`.
 
 ---
 
