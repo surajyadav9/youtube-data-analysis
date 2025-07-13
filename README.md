@@ -223,9 +223,13 @@ ON ref.id = raw.category_id
 
 ### 8. 🔁 Final Join with Glue Visual ETL
 
-- Used **Glue Visual ETL Job** to join the cleaned JSON and cleaned CSV datasets.
-- Output written to a new **Analytics S3 folder**.
-- Created final **Analytics Glue Catalog Table**.
+- Used **Glue Visual ETL Job** to join the cleaned raw(`raw_data_transformed`) and ref(`cleaned_statistics_ref_data`) catalogs tables on `raw.category_id` = `ref.id`.
+- Output(a `parquet` file) written to a new **Final Analytics** S3 bucket under `combined_ref_raw/` folder.
+- Also the ETL job creates a Glue catalog table `combined_ref_raw` from the final joined data. 
+
+![Glue Visual ETL to Combine Raw & Ref data](Glue_ETL_Combine_Raw_Ref_Data.png)
+
+**Auto generated PySpark Code** - [Glue_Visual_ETL_Final_Combined_Raw_n_Ref_data.py](Glue_Visual_ETL_Final_Combined_Raw_n_Ref_data.py)
 
 ---
 
