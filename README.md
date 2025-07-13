@@ -137,11 +137,12 @@ To interpret:
 
 ### 1. 📥 Upload Raw Data to S3
 
-- Download raw **CSV** and **JSON** data locally.
+- Download raw **CSV** and **JSON** data locally in `~/../<project_folder>/data/` folder.
 - Create an S3 bucket and upload the data:
   - CSV files with **Hive-style partitioning** (e.g., `/region=us/`, `/region=ca/`)
   - JSON files stored in a separate folder without partitioning
 - Use `aws s3 cp` or `aws s3 sync` via AWS CLI for uploads.
+> Full commands - [S3-CLI-Command.sh](S3-CLI-Command.sh)
 
 ---
 
@@ -150,6 +151,7 @@ To interpret:
 - Tried creating a **Glue Crawler** over JSON data.
 - Encountered issues due to **Glue's limited support for nested JSON structures**.
 - Decided to normalize the JSON before further processing.
+> ✅ **Note** - Here I also created `youtubeanalysis-glue-s3-role` role in `IAM` with following policies: `AmazonS3FullAccess` and `AWSGlueServiceRole` to give Glue access to S3 buckets. 
 
 ---
 
@@ -159,8 +161,14 @@ To interpret:
   - Read JSON from raw S3
   - Normalize/flatten JSON
   - Write as **Parquet** to a new "cleaned" S3 bucket
-- Successfully tested on one file.
+- Successfully tested on one file using `S3 Put` event.
 - Verified results using **Athena** queries on the generated **Glue Catalog**.
+
+``` sql
+SELECT * FROM "AwsDataCatalog"."db_youtube_cleaned"."cleaned_statistics_ref_data" limit 10;
+```
+  
+> ✅ **Note** - 1. Created another role `youtubeanalysis-lambda-s3-role` with full access to S3 `AmazonS3FullAccess` and Glue `AWSGlueServiceRole` 2. Used Lambda Layers `AWSSDKPandas-Python39` version `28` for the dependecy packages. 2. Modified the `timeout:3min`, `memory:256MB` and `storage:512MB` for seamless run.
 
 ---
 
@@ -184,6 +192,8 @@ To interpret:
 
 - Added an **S3 trigger** on the raw JSON folder to invoke the Lambda function.
 - Lambda automatically creates a Parquet version and updates the Glue catalog.
+
+> ✅ **Note** - Triggers will be `All object create event` i.e. `PUT`, `POST`, `COPY` of only `.json` type in the JSON data source folder.
 
 ---
 
