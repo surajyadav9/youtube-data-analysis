@@ -128,8 +128,7 @@ Each `*_category_id.json` file provides metadata about YouTube video categories 
 To interpret:
 - Match the `category_id` in the CSV to the `id` in JSON
 - Extract `snippet.title` as the actual category name
-
-
+> ⚠️ Note: The other fields (like `channelId`, `etag`, etc.) are metadata from the YouTube API and aren't needed for mapping or analysis.
 
 ---
 
