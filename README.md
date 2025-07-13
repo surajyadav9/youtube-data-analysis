@@ -1,8 +1,8 @@
-# YouTube Data Analysis 📊📺
+# Data Engineering Project: End-to-End ETL Data Pipeline for Processing and Analyzing YouTube Trends on AWS ▶️📊
 
 ## 🚀 Project Overview
 
-This project is a complete end-to-end data engineering pipeline for analyzing YouTube data using AWS cloud services. The core goal is to extract insights from raw CSV and JSON data formats using AWS Glue, Lambda, Athena, and QuickSight. 
+This project is a complete end-to-end data engineering pipeline for analyzing YouTube data using AWS cloud services. The core goal is to extract insights from raw CSV and JSON data formats using AWS Glue, Lambda, Athena, and QuickSight.
 
 Through this project, I aimed to strengthen my understanding of:
 - Cloud data lakes and cataloging using AWS
@@ -14,18 +14,18 @@ Through this project, I aimed to strengthen my understanding of:
 
 ## 🧰 AWS Services & Tools Used
 
+- **IAM** – Create roles with attached required policies for AWS services to acccess another service
 - **Amazon S3** – Storage of raw and processed data
 - **AWS CLI** – Upload data to S3 with hive-style partitioning
 - **AWS Lambda** – Transform/normalize JSON to Parquet
 - **AWS Glue** – Data cataloging, crawling, and ETL jobs (both visual and PySpark-based)
 - **Amazon Athena** – Serverless querying of datasets
 - **Amazon QuickSight** – Dashboard and reporting
+- **Amazon CloudWatch** – Logging errors and outputs for debugging and data verification
 
 ---
 
 ## 🧠 Prerequisites
-
-Before you start, make sure the following are in place:
 
 - An active **AWS Account**
 - **AWS CLI** installed and configured with credentials
@@ -36,6 +36,103 @@ Before you start, make sure the following are in place:
 - IAM roles/policies granting S3, Glue, Lambda, and Athena access
 
 ---
+
+## 📊 Dataset Used: Trending YouTube Video Statistics
+
+A daily-record dataset of top trending YouTube videos across multiple countries, originally compiled by **datasnaek** and hosted on Kaggle.
+**Link** - https://www.kaggle.com/datasets/datasnaek/youtube-new/data
+
+- Covers trending videos from **14 November 2017 to 14 June 2018** (7‑month period).
+- Includes up to **200 daily trending videos per country**.
+- Countries included: **USA, Canada, Great Britain, Germany, France, Russia, India, Japan, South Korea, Mexico**.
+- Intended for trend analysis, visualization, and predictive modeling based on public engagement metrics.
+
+### 📅 Estimated Record Count per Country File(CSV)
+
+| Item                          | Value                          |
+|-------------------------------|--------------------------------|
+| Date Range                    | 14 Nov 2017 – 14 Jun 2018      |
+| Number of Days                | 213                            |
+| Videos per Day                | 200                            |
+| Approximate Records per File | **42,600**                     |
+| Number of Countries           | 10                             |
+| Total Records (All Files)     | ~**426,000**                   |
+
+> ⚠️ Note: Actual counts may vary slightly due to video removals, regional restrictions, or missing data on certain days.
+
+
+### 📁 Files
+
+### CSV Files (one per country)
+
+Each CSV file (e.g., `USvideos.csv`, `INvideos.csv`) includes:
+
+| Column                 | Description                                                                 |
+|------------------------|-----------------------------------------------------------------------------|
+| `video_id`             | Unique video identifier                                                     |
+| `trending_date`        | Date when the video appeared on trending list (format: YY.DD.MM)           |
+| `publish_time`         | ISO‑8601 UTC timestamp when uploaded                                        |
+| `title`, `channel_title` | Video title and channel name                                              |
+| `category_id`          | Numeric category code (**country‑specific**)                                   |
+| `tags`                 | List of video tags separated by `\|`                                        |
+| `views`, `likes`, `dislikes`, `comment_count` | Engagement metrics                                   |
+| `description`          | Video description text                                                     |
+| `comments_disabled`, `ratings_disabled`, `video_error_or_removed` | Boolean flags for video status |
+
+- Up to **16 columns per file**.
+- Contains daily snapshots.
+> ⚠️ Note: Some videos may appear multiple times across days if still trending.
+
+### JSON Files (one per country)
+
+E.g., `US_category_id.json`, `IN_category_id.json`:
+
+```json
+{
+   "kind":"youtube#videoCategoryListResponse",
+   "etag":"\"ld9biNPKjAjgjV7EZ4EKeEGrhao/1v2mrzYSYG6onNLt2qTj13hkQZk\"",
+   "items":[
+      {
+         "kind":"youtube#videoCategory",
+         "etag":"\"ld9biNPKjAjgjV7EZ4EKeEGrhao/Xy1mB4_yLrHy_BmKmPBggty2mZQ\"",
+         "id":"1",
+         "snippet":{
+            "channelId":"UCBR8-60-B28hp2BmDPdntcQ",
+            "title":"Film & Animation",
+            "assignable":true
+         }
+      },
+      {
+         "kind":"youtube#videoCategory",
+         "etag":"\"ld9biNPKjAjgjV7EZ4EKeEGrhao/UZ1oLIIz2dxIhO45ZTFR3a3NyTA\"",
+         "id":"2",
+         "snippet":{
+            "channelId":"UCBR8-60-B28hp2BmDPdntcQ",
+            "title":"Autos & Vehicles",
+            "assignable":true
+         }
+      },
+      ...
+    ]
+}
+```
+
+
+#### 🧾 What Is the JSON Data?
+
+Each `*_category_id.json` file provides metadata about YouTube video categories for a specific region (e.g., `US_category_id.json`).
+
+- It maps each **numeric `category_id`** (used in the CSV files) to a **human-readable category name** like `"Music"` or `"Sports"`.
+- The data is nested: you'll find a list of `items`, where each `item` contains an `id` and a `snippet.title`.
+
+To interpret:
+- Match the `category_id` in the CSV to the `id` in JSON
+- Extract `snippet.title` as the actual category name
+
+
+
+---
+
 
 ## 📂 Project Workflow
 
