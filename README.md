@@ -207,6 +207,18 @@ SELECT * FROM "AwsDataCatalog"."db_youtube_cleaned"."cleaned_statistics_ref_data
   - Wrote cleaned Parquet to a new S3 location under `raw_data_transformed` folder partitioned by `region`
 - Created a new Glue Crawler to crawl the cleaned raw folder `raw_data_transformed` to create a new catalog table with partition column `region`.
 
+> ✅ **Note** - Verified data by joining both reference(JSON now parquet) and raw(CSV now parquet) in **Athena**.
+``` sql
+-- join raw transformed catalog table with the cleaned ref catalog table
+-- produces 3,734,265 records
+-- this then is implemented in Glue Visual ETL job to create 1 final data for analysis/reporting.
+SELECT * 
+FROM "db_youtube_cleaned"."cleaned_statistics_ref_data" ref 
+INNER JOIN "db_youtube_cleaned"."raw_data_transformed" raw 
+ON ref.id = raw.category_id
+;
+```
+
 ---
 
 ### 8. 🔁 Final Join with Glue Visual ETL
