@@ -225,7 +225,7 @@ ON ref.id = raw.category_id
 
 - Used **Glue Visual ETL Job** to join the cleaned raw(`raw_data_transformed`) and ref(`cleaned_statistics_ref_data`) catalogs tables on `raw.category_id` = `ref.id`.
 - Output(a `parquet` file) written to a new **Final Analytics** S3 bucket under `combined_ref_raw/` folder.
-- Also the ETL job creates a Glue catalog table `combined_ref_raw` from the final joined data. 
+- Also the ETL job creates a Glue catalog table `combined_ref_raw_catalog` from the final joined data with two partition keys `region` and `category_id`. 
 
 ![Glue Visual ETL to Combine Raw & Ref data](Glue_ETL_Combine_Raw_Ref_Data.png)
 
@@ -236,9 +236,9 @@ ON ref.id = raw.category_id
 ### 9. 📊 Visualization with QuickSight
 
 - Connected **QuickSight** to **Athena**.
-- Imported the **Analytics table** for reporting.
+- Imported the `combined_ref_raw_catalog` table for reporting.
 - Built insightful dashboards using dimensions like region, category, and more.
-
+- [View the Analysis Report](https://drive.google.com/file/d/1MxWtaX8H_EvRocOgC9YZcoRjD6lU9vvk/view?usp=sharing)
 ---
 
 ## 📌 Final Notes
@@ -248,6 +248,4 @@ ON ref.id = raw.category_id
 - Offers hands-on experience with data wrangling, schema handling, and reporting.
 
 ---
-
-## 📁 Directory Structure
 
