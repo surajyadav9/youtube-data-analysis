@@ -11,7 +11,7 @@ os_input_write_data_operation = os.environ['write_data_operation']
 
 
 def lambda_handler(event, context):
-    # Fetch the bucket-name(including sub-folders) and key(i.e. datafile name)
+    # Fetch the bucket-name and key(file name including sub-folders eg. youtube/../../CA_category_id.json)
     bucket = event['Records'][0]['s3']['bucket']['name']
     key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
     try:
