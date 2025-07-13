@@ -1,4 +1,4 @@
-# Note - all the files JSON and CSV are store in the <project>/data/ folder
+# Note - all the data files JSON and CSV are store in the <project>/data/ folder
 
 # Upload JSON raw statistics data to S3 bucket using AWS CLI
 aws s3 cp . s3://youtubeanalysis-raw-useast1-315380538310-dev/youtube-data/raw_statistics_reference_data/ --recursive --exclude "*" --include "*.json"
