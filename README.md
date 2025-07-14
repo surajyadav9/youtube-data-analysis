@@ -238,7 +238,7 @@ ON ref.id = raw.category_id
 - Connected **QuickSight** to **Athena**.
 - Imported the `combined_ref_raw_catalog` table for reporting.
 - Built insightful dashboards using dimensions like region, category, and more.
-- [View the Analysis Report](https://drive.google.com/file/d/1MxWtaX8H_EvRocOgC9YZcoRjD6lU9vvk/view?usp=sharing)
+- [View the Analysis Report](DE_on_YouTube_Trending_Data_Project_Report.pdf)
 ---
 
 ## 📌 Final Notes
